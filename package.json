@@ -1,0 +1,27 @@
+{
+  "name": "com.ccccr.psychounity_pump",
+  "version": "0.0.1",
+  "displayName": "psychounity_pump",
+  "description": "A submodule that provide pump-driven feature for psychounity",
+  "unity": "2022.3",
+  "documentationUrl": "https://psychounity.org/",
+  "changelogUrl": "https://psychounity.org/",
+  "license": "LGPL-3.0-or-later",
+  "dependencies": {  },
+  "samples": [
+    {
+      "displayName": "LabK1",
+      "description": "basic usage of the LabK1",
+      "path": "Samples~/LabK1"
+    }
+  ],
+  "keywords": [
+    "neuroscience",
+    "pump"
+  ],
+  "author": {
+    "name": "ccccr",
+    "email": "hy.ccccr@gmail.com",
+    "url": "hy.ccccr@gmail.com"
+  }
+}

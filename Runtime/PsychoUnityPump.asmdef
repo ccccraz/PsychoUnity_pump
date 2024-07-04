@@ -1,0 +1,16 @@
+{
+    "name": "PsychoUnityPump",
+    "rootNamespace": "Pump",
+    "references": [
+        "GUID:0ef37da79d7c1224ba8031136a45d006"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
