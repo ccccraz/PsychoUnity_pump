@@ -7,13 +7,12 @@ namespace Pump
 {
     public class LabK1
     {
-        private SerialComManager.SerialPortConfig _config;
+        private SerialPortConfig _config;
         private const string PumpName = "LabK1";
         private const int BaudRate = 9600;
         private const int DataBits = 8;
         private const StopBits Stop = StopBits.One;
         private const Parity ParityBits = Parity.Even;
-        private const Handshake FlowCtrl = Handshake.None;
 
         private const byte ReadCmd = 0x03;
         private const byte WriteInt = 0x06;
@@ -52,10 +51,9 @@ namespace Pump
 
         private void InitLabK1(string portName)
         {
-            _config = new SerialComManager.SerialPortConfig(PumpName, portName, BaudRate, DataBits, Stop, ParityBits,
-                FlowCtrl);
-            SerialComManager.Instance.AddSerialCom(PumpName);
-            SerialComManager.Instance.SetSerialCom(_config);
+            _config = new SerialPortConfig(portName, BaudRate, DataBits, Stop, ParityBits);
+            SerialComManager.Instance.AddSerialCom(PumpName, portName, BaudRate);
+            SerialComManager.Instance.SetSerialCom(PumpName, _config);
             SerialComManager.Instance.Open(PumpName);
         }
 
@@ -134,13 +132,13 @@ namespace Pump
         public void GiveReward(byte pumpID = 0x01)
         {
             var msg = BuildMsg(pumpID, WriteInt, _startStopRegister, _startCmd);
-            SerialComManager.Instance.Write(PumpName, ref msg, msg.Length);
+            SerialComManager.Instance.Write(PumpName, msg);
         }
 
         public void StopReward(byte pumpID = 0x01)
         {
             var msg = BuildMsg(pumpID, WriteInt, _startStopRegister, _stopCmd);
-            SerialComManager.Instance.Write(PumpName, ref msg, msg.Length);
+            SerialComManager.Instance.Write(PumpName, msg);
         }
 
         public void SetSpeed(float speed, byte pumpId = 0x01)
@@ -148,17 +146,17 @@ namespace Pump
             var data = BitConverter.GetBytes(speed);
             Array.Reverse(data);
             var msg = BuildMshFloat(pumpId, WriteFloat, _speedRegister, _numOfRegister, _sizeOfFloat, data);
-            SerialComManager.Instance.Write(PumpName, ref msg, msg.Length);
+            SerialComManager.Instance.Write(PumpName, msg);
         }
 
         public float GetSpeed(byte pumpId = 0x01)
         {
             var msg = BuildMshFloat(pumpId, ReadCmd, _speedRegister, _numOfRegister);
             float result = -1;
-            SerialComManager.Instance.Write(PumpName, ref msg, msg.Length);
+            SerialComManager.Instance.Write(PumpName, msg);
 
             var receiveBuf = new byte[100];
-            SerialComManager.Instance.Read(PumpName, ref receiveBuf, receiveBuf.Length);
+            SerialComManager.Instance.Read(PumpName, msg);
             
             if (receiveBuf.Length < 9) return result;
             
