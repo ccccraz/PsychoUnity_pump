@@ -1,22 +1,11 @@
 using System;
-using System.Collections.Generic;
-using System.IO.Ports;
-using System.Linq;
-using System.Threading.Tasks;
-using Codice.Client.Common;
 using PsychoUnity.Manager;
 
 namespace Pump
 {
-    public class AT8236
+    public class At8236
     {
         private const string DeviceName = "PumpAT8236";
-        private const int DataBits = 8;
-        private const StopBits StopBit = StopBits.None;
-        private const Parity ParityBits = Parity.None;
-        private const Handshake FlowCtrl = Handshake.None;
-
-        private readonly byte[] _header = { 0xAB, 0xCD };
 
         private readonly byte[] _cmdStart = { 0x00 };
         private readonly byte[] _cmdStop = { 0x01 };
@@ -24,53 +13,35 @@ namespace Pump
         private readonly byte[] _cmdSetSpeed = { 0x03 };
         private readonly byte[] _cmdGetSpeed = { 0x04 };
 
-        public AT8236(string portName, int baudRate)
+        public At8236(string portName, int baudRate)
         {
-            var config = new SerialComManager.SerialPortConfig(DeviceName, portName, baudRate, DataBits, StopBit,
-                ParityBits, FlowCtrl);
-            SerialComManager.Instance.AddSerialCom(DeviceName);
-            SerialComManager.Instance.SetSerialCom(config);
+            SerialComManager.Instance.AddSerialCom(DeviceName, portName, baudRate);
             SerialComManager.Instance.EnableDtr(DeviceName, true);
             SerialComManager.Instance.Open(DeviceName);
         }
 
-        private byte[] BuildMsg(byte[] cmd, byte[] data = null)
-        {
-            if (data != null)
-            {
-                var rv = _header.Concat(cmd).Concat(data);
-                return rv.ToArray();
-            }
-            else
-            {
-                var rv = _header.Concat(cmd);
-                return rv.ToArray();
-            }
-        }
-
         public void GiveReward()
         {
-            var msg = BuildMsg(_cmdStart);
-            SerialComManager.Instance.Write(DeviceName, ref msg, msg.Length);
+            SerialComManager.Instance.SendMsg(DeviceName, _cmdStart);
         }
 
         public void GiveRewardToMilliSeconds(int duration)
         {
             var data = BitConverter.GetBytes(duration);
-            var msg = BuildMsg(_cmdStart, data);
-            SerialComManager.Instance.Write(DeviceName, ref msg, msg.Length);
+            var msg = new byte[_cmdStart.Length + data.Length];
+            Buffer.BlockCopy(_cmdStart, 0, msg, 0, msg.Length);
+            Buffer.BlockCopy(data, 0, msg, msg.Length, data.Length);
+            SerialComManager.Instance.SendMsg(DeviceName, msg);
         }
 
         public void StopReward()
         {
-            var msg = BuildMsg(_cmdStop);
-            SerialComManager.Instance.Write(DeviceName, ref msg, msg.Length);
+            SerialComManager.Instance.SendMsg(DeviceName, _cmdStop);
         }
 
         public void Reverse()
         {
-            var msg = BuildMsg(_cmdReverse);
-            SerialComManager.Instance.Write(DeviceName, ref msg, msg.Length);
+            SerialComManager.Instance.SendMsg(DeviceName, _cmdReverse);
         }
 
         public void SetDirection()
@@ -80,19 +51,15 @@ namespace Pump
         public void SetSpeed(int speed)
         {
             var data = BitConverter.GetBytes(speed);
-            var msg = BuildMsg(_cmdSetSpeed, data);
-            SerialComManager.Instance.Write(DeviceName, ref msg, msg.Length);
+            var msg = new byte[_cmdSetSpeed.Length + data.Length];
+            Buffer.BlockCopy(_cmdSetSpeed, 0, msg, 0, msg.Length);
+            Buffer.BlockCopy(data, 0, msg, msg.Length, data.Length);
+            SerialComManager.Instance.SendMsg(DeviceName, msg);
         }
 
-        public float GetSpeed()
+        public void GetSpeed()
         {
-            var msg = BuildMsg(_cmdGetSpeed);
-            SerialComManager.Instance.Write(DeviceName, ref msg, msg.Length);
-
-            var buf = new byte[4];
-            SerialComManager.Instance.Read(DeviceName, ref buf, buf.Length);
-
-            return BitConverter.ToSingle(buf);
+            SerialComManager.Instance.SendMsg(DeviceName, _cmdGetSpeed);
         }
     }
 }

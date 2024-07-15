@@ -1,6 +1,6 @@
 {
   "name": "com.ccccr.psychounity_pump",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "displayName": "psychounity_pump",
   "description": "A submodule that provide pump-driven feature for psychounity",
   "unity": "2022.3",
@@ -22,6 +22,6 @@
   "author": {
     "name": "ccccr",
     "email": "hy.ccccr@gmail.com",
-    "url": "hy.ccccr@gmail.com"
+    "url": "https://github.com/Ccccraz"
   }
 }
