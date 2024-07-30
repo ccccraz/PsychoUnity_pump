@@ -61,5 +61,10 @@ namespace Pump
         {
             SerialComManager.Instance.SendMsg(DeviceName, _cmdGetSpeed);
         }
+
+        public void Destroy()
+        {
+            SerialComManager.Instance.Close(DeviceName);
+        }
     }
 }
