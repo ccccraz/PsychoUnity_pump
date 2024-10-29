@@ -2,7 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using PsychoUnity.Manager;
-using Pump;
+using PsychoUnity.Peripheral.Pump;
 using UnityEngine;
 
 public class TestLabK1 : MonoBehaviour
